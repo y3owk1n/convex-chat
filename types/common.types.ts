@@ -2,16 +2,17 @@ import { Id } from "convex-dev/values";
 
 export type Message = {
   _id: Id;
-  channel: Id;
-  body: string;
   author: string;
+  body: string;
+  channel: Id;
+  user: Id;
   time: number;
 };
 
 export type Channel = {
   _id: Id;
   name: string;
-  owner: string;
+  owner: Id;
 };
 
 export type User = {

@@ -1,4 +1,6 @@
 import { useMutation, useQuery } from "@/convex/_generated";
+import { useAuth } from "@/lib/auth";
+import { Message } from "@/types/common.types";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   Box,
@@ -14,7 +16,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Id } from "convex-dev/values";
-import React, { FC, FormEvent, useState } from "react";
+import React, { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { BiSend } from "react-icons/bi";
 import MessageView from "./MessageView";
 
@@ -23,14 +25,28 @@ interface ChatBoxProps {
 }
 
 const ChatBox: FC<ChatBoxProps> = ({ channelId }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const messages = useQuery("listMessages", channelId);
   const sendMessage = useMutation("sendMessage");
   const toast = useToast();
   const { isAuthenticated } = useAuth0();
+  const { userId } = useAuth();
 
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 
   const [newMessageText, setNewMessageText] = useState("");
+
+  useEffect(() => {
+    if (containerRef && containerRef.current) {
+      const element = containerRef.current;
+      element.scroll({
+        top: element.scrollHeight,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [containerRef, messages]);
+
   async function handleSendMessage(event: FormEvent) {
     event.preventDefault();
     setIsSendingMessage(true);
@@ -54,16 +70,24 @@ const ChatBox: FC<ChatBoxProps> = ({ channelId }) => {
       <Heading w="full" as={"h2"} fontSize="2xl">
         Chats
       </Heading>
-      <VStack w="full" textAlign={"left"}>
+      <VStack
+        w="full"
+        textAlign={"left"}
+        maxH="50vh"
+        overflowY={"auto"}
+        ref={containerRef}
+      >
         {messages ? (
           messages.length ? (
-            messages.slice(-10).map((message: any) => (
+            messages.slice(-10).map((message) => (
               <HStack
-                bgColor="gray.50"
+                bgColor={
+                  message.user.equals(userId as Id) ? "blue.50" : "gray.50"
+                }
                 p={4}
                 w="full"
                 rounded="md"
-                key={message._id}
+                key={message._id.toString()}
                 justifyItems="content-between"
               >
                 <MessageView message={message} />

@@ -1,4 +1,4 @@
-import { Channel } from "@/types/common.types";
+import { Channel, User } from "@/types/common.types";
 import { mutation } from "convex-dev/server";
 import { Id } from "convex-dev/values";
 
@@ -12,8 +12,12 @@ export default mutation(
       return "UNAUTHENTICATED";
     }
     const channel: Channel = await db.get(channelId);
+    const user: User = await db
+      .table("users")
+      .filter((q) => q.eq(q.field("tokenIdentifier"), identity.tokenIdentifier))
+      .unique();
     if (channel) {
-      if (channel.owner === identity.tokenIdentifier) {
+      if (channel.owner.equals(user._id)) {
         return db.delete(channelId);
       } else {
         return "NOT_OWNER";

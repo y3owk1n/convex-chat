@@ -2,6 +2,7 @@ import ChatBox from "@/components/ChatBox";
 import LoginButton from "@/components/LoginButton";
 import LogoutButton from "@/components/LogoutButton";
 import { useMutation, useQuery } from "@/convex/_generated";
+import { useAuth } from "@/lib/auth";
 import { Channel } from "@/types/common.types";
 import { slugify } from "@/utils/slugify";
 import { useAuth0 } from "@auth0/auth0-react";

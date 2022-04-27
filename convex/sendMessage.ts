@@ -1,3 +1,4 @@
+import { Message, User } from "@/types/common.types";
 import { mutation } from "convex-dev/server";
 import { Id } from "convex-dev/values";
 
@@ -12,15 +13,16 @@ export default mutation(
     if (!identity) {
       return "UNAUTHENTICATED";
     }
-    const user = await db
+    const user: User = await db
       .table("users")
       .filter((q) => q.eq(q.field("tokenIdentifier"), identity.tokenIdentifier))
       .unique();
     const message = {
-      channel,
       body,
-      time: Date.now(),
+      channel,
+      author: user.name,
       user: user._id,
+      time: Date.now(),
     };
     return db.insert("messages", message);
   }
