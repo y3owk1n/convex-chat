@@ -1,6 +1,6 @@
 This is a fun project that me playing around with [Convex](https://www.convex.dev/) that i just discovered. Started with [Convex Chat App Tutorial](https://docs.convex.dev/getting-started/basics/chat-app) and extended a little bit more on authentication and authorization based on actions.
 
-Live Demo -
+Live Demo - https://chat-for-fun.vercel.app/
 
 ## Stacks
 
