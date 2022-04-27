@@ -1,0 +1,11 @@
+{
+  "authInfo": [
+    {
+      "domain": "https://dev-7erd7tmk.jp.auth0.com",
+      "applicationID": "9hIBBfrcOpHEYGXvJw7g2DtaDCP8MDm7"
+    }
+  ],
+  "functions": "convex/",
+  "instanceName": "acoustic-reddeer-300",
+  "origin": "https://acoustic-reddeer-300.convex.cloud"
+}
