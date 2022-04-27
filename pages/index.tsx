@@ -1,3 +1,4 @@
+import ChannelForm from "@/components/ChannelForm";
 import ChatBox from "@/components/ChatBox";
 import LoginButton from "@/components/LoginButton";
 import LogoutButton from "@/components/LogoutButton";
@@ -35,38 +36,7 @@ const Home: NextPage = () => {
 
   const toast = useToast();
 
-  const [newChannelName, setNewChannelName] = useState("");
-
-  const addChannel = useMutation("addChannel");
-
   const removeChannel = useMutation("removeChannel");
-
-  const [channelAdding, setChannelAdding] = useState(false);
-
-  const handleAddChannel = async (event: FormEvent) => {
-    event.preventDefault();
-    setChannelAdding(true);
-    const id = await addChannel(slugify(newChannelName));
-    if (id === "UNAUTHENTICATED") {
-      toast({
-        title: "You must be logged in to create a channel",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
-      setChannelAdding(false);
-    } else {
-      toast({
-        title: `Channel #${newChannelName} created`,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
-      setChannelId(id);
-      setNewChannelName("");
-      setChannelAdding(false);
-    }
-  };
 
   const handleRemoveChannel = async (channelId: Id) => {
     const res = await removeChannel(channelId);
@@ -169,25 +139,7 @@ const Home: NextPage = () => {
               )}
             </VStack>
 
-            {isAuthenticated && (
-              <VStack as="form" onSubmit={handleAddChannel} w="full">
-                <Input
-                  value={newChannelName}
-                  onChange={(event) => setNewChannelName(event.target.value)}
-                  placeholder="Add a new channel..."
-                  w="full"
-                />
-                <Button
-                  w="full"
-                  type="submit"
-                  colorScheme={"blue"}
-                  disabled={!newChannelName || channelAdding}
-                  isLoading={channelAdding}
-                >
-                  Add
-                </Button>
-              </VStack>
-            )}
+            {isAuthenticated && <ChannelForm setChannelId={setChannelId} />}
           </VStack>
         </GridItem>
         <GridItem colSpan={[1, null, 4]}>
