@@ -27,10 +27,31 @@ interface ChatBoxProps {
 const ChatBox: FC<ChatBoxProps> = ({ channelId }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const messages = useQuery("listMessages", channelId);
-  const sendMessage = useMutation("sendMessage");
+
   const toast = useToast();
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
   const { userId } = useAuth();
+
+  const sendMessage = useMutation("sendMessage").withOptimisticUpdate(
+    (localStore, channelId, newMessageText) => {
+      const existingMessages = localStore.getQuery("listMessages", [channelId]);
+      if (existingMessages !== undefined) {
+        const newMessage: Message = {
+          _id: Id.fromString("temp-id"),
+          author: user?.name as string,
+          body: newMessageText,
+          channel: Id.fromString(channelId.toString()),
+          user: Id.fromString(userId!.toString()),
+          time: Date.now(),
+        };
+        localStore.setQuery(
+          "listMessages",
+          [channelId],
+          [...existingMessages, newMessage]
+        );
+      }
+    }
+  );
 
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 

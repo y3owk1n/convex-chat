@@ -1,4 +1,5 @@
 import { useMutation } from "@/convex/_generated";
+import { Channel } from "@/types/common.types";
 import { slugify } from "@/utils/slugify";
 import { VStack, Input, Button, useToast } from "@chakra-ui/react";
 import { Id } from "convex-dev/values";
@@ -18,7 +19,23 @@ const ChannelForm: FC<Props> = ({ setChannelId }) => {
   const [newChannelName, setNewChannelName] = useState("");
   const [channelAdding, setChannelAdding] = useState(false);
 
-  const addChannel = useMutation("addChannel");
+  const addChannel = useMutation("addChannel").withOptimisticUpdate(
+    (localStore) => {
+      const existingChannels = localStore.getQuery("listChannels", []);
+      if (existingChannels !== undefined) {
+        const newChannel: Channel = {
+          _id: Id.fromString("temp-id"),
+          name: slugify(newChannelName),
+          owner: Id.fromString("temp-id"),
+        };
+        localStore.setQuery(
+          "listChannels",
+          [],
+          [...existingChannels, newChannel]
+        );
+      }
+    }
+  );
 
   const toast = useToast();
 

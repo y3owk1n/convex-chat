@@ -20,7 +20,6 @@ export default mutation(
     const message = {
       body,
       channel,
-      author: user.name,
       user: user._id,
       time: Date.now(),
     };
